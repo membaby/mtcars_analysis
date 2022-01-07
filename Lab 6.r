@@ -1,20 +1,15 @@
 
 
-data("mtcars")
-
 #Distribution Questions.
+library(datasets)
+data("mtcars")
 #A)
 weight = mtcars$wt
-average = sum(weight) / length(weight)
-variance = 0
-for (i in weight)
-{
-  variance = variance + (i - average)^2
-}
-
-variance = variance / length(weight)
-plot(weight, dnorm(weight, average, variance^0.5))
-
+weight_sorted = weight[order(weight)]
+cumulative = pnorm(3.4, mean(weight_sorted), sd(weight_sorted))
+plot(weight_sorted, cumulative)
+prob = 1- cumulative
+paste("Probability of a car having weight of 3.4 lb or more is", as.character(prob))
 #B)
 manual_count = 0
 for (i in mtcars$vs)
@@ -28,9 +23,6 @@ success_prob = manual_count / length(mtcars$vs)
 #probability of 18 cars or less being manual
 cumulative = pbinom(seq(0,32), 32, success_prob)
 paste("The probability of 18 or less cars being manuals out of the 32 cars is", as.character(cumulative[19]))
-
-
-
 #C)
 
 
@@ -44,19 +36,28 @@ paste("The probability of 4 or less parking spaces being filled with the correct
 
 
 #Permutations and Combinations Questions
+library(gtools)
 #A)
 #Method 1:
-perm_count = 3^3 - 3^2
+perms = permutations(3,3,seq(0,2), repeats.allowed = TRUE)
+perms <- perms[-1:-9,]
+perms
 
 #Method 2:
-all_perms = permutations(3,3,seq(0,2), repeats.allowed = TRUE)
-two_digit_nums = permutations(3,2,seq(0,2), repeats.allowed = TRUE)
-perm_count = nrow(all_perms) - nrow(two_digit_nums)
-
-paste("Number of possible ternary numbers with 3 digits =", perm_count)
-
+perms = c()
+for (i in 1:2)
+{
+  for (j in 0:2)
+  {
+    for (k in 0:2)
+    {
+      perms = append(perms, c(i,j,k))
+    }
+  }
+}
+perms = matrix(perms, 3^3 - 3^2, 3, byrow = TRUE)
+perms
 #B)
-library(gtools)
 
 #Method 1:
 sample_space_count = (factorial(9)/(factorial(3)*factorial(9-3)))
